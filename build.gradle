@@ -41,6 +41,7 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
     implementation 'p6spy:p6spy:3.9.1'
     implementation 'com.github.gavlyukovskiy:datasource-decorator-spring-boot-autoconfigure:1.9.0'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
 
     implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
