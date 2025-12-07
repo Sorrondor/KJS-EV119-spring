@@ -22,7 +22,7 @@ public class MemberHealth {
     @EqualsAndHashCode.Include
     private Long id;
 
-    private Integer MemberHealthCode;
+    private Integer memberHealthCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID")

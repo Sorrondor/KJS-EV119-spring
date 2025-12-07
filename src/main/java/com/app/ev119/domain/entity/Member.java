@@ -29,18 +29,18 @@ public class Member {
     @Id @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_MEMBER_GENERATOR")
     @EqualsAndHashCode.Include
     private Long id;
-    private String MemberEmail;
-    private String MemberPassword;
-    private String MemberName;
+    private String memberEmail;
+    private String memberPassword;
+    private String memberName;
 
     @Enumerated(EnumType.STRING)
-    private GenderType MemberGender;
+    private GenderType memberGender;
 
     @Enumerated(EnumType.STRING)
-    private BloodRh MemberBloodRh;
+    private BloodRh memberBloodRh;
 
     @Enumerated(EnumType.STRING)
-    private BloodAbo MemberBloodAbo;
+    private BloodAbo memberBloodAbo;
 
     @OneToMany(mappedBy = "member")
     private List<MemberStaff> memberStaffs;

@@ -42,7 +42,13 @@ dependencies {
     implementation 'p6spy:p6spy:3.9.1'
     implementation 'com.github.gavlyukovskiy:datasource-decorator-spring-boot-autoconfigure:1.9.0'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
-
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
     implementation "com.querydsl:querydsl-core"
