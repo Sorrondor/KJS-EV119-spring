@@ -18,7 +18,7 @@ import java.util.List;
 public class MemberDTO {
     private Long id;
     private String memberEmail;
-    private String memberPassword;
+//    private String memberPassword;
     private String memberName;
     private GenderType memberGender;
     private BloodRh  memberBloodRh;
