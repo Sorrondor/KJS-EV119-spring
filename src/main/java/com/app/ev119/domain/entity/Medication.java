@@ -9,20 +9,20 @@ import lombok.*;
 })
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor @AllArgsConstructor
-@Entity
-@Table(name = "TBL_MEMBER_HEALTH")
+@Entity @Table(name = "TBL_MEDICATION")
 @SequenceGenerator(
-        name = "SEQ_MEMBER_HEALTH_GENERATOR",
-        sequenceName = "SEQ_MEMBER_HEALTH",
+        name = "SEQ_MEDICATION_GENERATOR",
+        sequenceName = "SEQ_MEDICATION",
         allocationSize = 1
 )
-public class MemberHealth {
-
-    @Id @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_MEMBER_HEALTH_GENERATOR")
-    @EqualsAndHashCode.Include
+public class Medication {
+    @Id @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_MEDICATION_GENERATOR")
     private Long id;
 
-    private Integer memberHealthCode;
+    private String medicationName;
+    private String medicationUsage;
+    private String medicationTakingtime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID")

@@ -42,9 +42,6 @@ public class MemberService {
         member.setMemberEmail(dto.getMemberEmail());
         member.setMemberPassword(passwordEncoder.encode(dto.getMemberPassword()));
         member.setMemberName(dto.getMemberName());
-        member.setMemberGender(dto.getMemberGender());
-        member.setMemberBloodRh(dto.getMemberBloodRh());
-        member.setMemberBloodAbo(dto.getMemberBloodAbo());
 
         memberRepository.save(member);
     }

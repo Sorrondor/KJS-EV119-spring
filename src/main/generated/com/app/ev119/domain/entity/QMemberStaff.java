@@ -48,7 +48,7 @@ public class QMemberStaff extends EntityPathBase<MemberStaff> {
 
     public QMemberStaff(Class<? extends MemberStaff> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
+        this.member = inits.isInitialized("member") ? new QMember(forProperty("member"), inits.get("member")) : null;
     }
 
 }
