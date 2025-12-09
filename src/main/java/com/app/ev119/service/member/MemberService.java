@@ -8,7 +8,6 @@ import com.app.ev119.jwt.JwtTokenProvider;
 import com.app.ev119.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,20 +23,17 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-    private final StringRedisTemplate stringRedisTemplate;
-    private final RedisTemplate<Object, Object> redisTemplate;
+    private final StringRedisTemplate stringRedisTemplate; // 문자열용 템플릿만 사용
 
     @Transactional
     public void signUp(SignUpRequestDTO dto) {
 
-
         // 이메일 중복 체크
-        if(memberRepository.existsByMemberEmail(dto.getMemberEmail())) {
-            log.info("중복된 이메일");
+        if (memberRepository.existsByMemberEmail(dto.getMemberEmail())) {
+            log.info("중복된 이메일: {}", dto.getMemberEmail());
             throw new IllegalArgumentException("이미 가입된 이메일입니다.");
         }
 
-        // Member
         Member member = new Member();
         member.setMemberEmail(dto.getMemberEmail());
         member.setMemberPassword(passwordEncoder.encode(dto.getMemberPassword()));
@@ -46,14 +42,13 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-
     @Transactional
     public LoginResponseDTO login(LoginRequestDTO dto) {
 
         Member member = memberRepository.findByMemberEmail(dto.getMemberEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
 
-        if(!passwordEncoder.matches(dto.getMemberPassword(), member.getMemberPassword())) {
+        if (!passwordEncoder.matches(dto.getMemberPassword(), member.getMemberPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
@@ -62,15 +57,18 @@ public class MemberService {
         String accessToken = jwtTokenProvider.createAccessToken(memberId);
         String refreshToken = jwtTokenProvider.createRefreshToken(memberId);
 
-        Long refreshValidity = jwtTokenProvider.getRefreshTokenValidityInMs();
+        Long refreshValidityMs = jwtTokenProvider.getRefreshTokenValidityInMs();
 
-        redisTemplate.opsForValue().set("RT:" + memberId, refreshToken, refreshValidity, TimeUnit.MICROSECONDS);
+        // Redis에 refresh token 저장 (RT:memberId)
+        stringRedisTemplate.opsForValue()
+                .set("RT:" + memberId, refreshToken, refreshValidityMs, TimeUnit.MILLISECONDS);
 
         return new LoginResponseDTO(accessToken, refreshToken);
     }
 
     @Transactional
     public void logout(Long memberId) {
-        redisTemplate.opsForHash().delete("RT:" + memberId);
+        // RT:memberId 키 삭제
+        stringRedisTemplate.delete("RT:" + memberId);
     }
 }
