@@ -8,6 +8,7 @@ import com.app.ev119.jwt.JwtTokenProvider;
 import com.app.ev119.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final StringRedisTemplate stringRedisTemplate; // 문자열용 템플릿만 사용
+    private final RedisTemplate<Object, Object> redisTemplate;
 
     @Transactional
     public void signUp(SignUpRequestDTO dto) {
@@ -38,9 +40,7 @@ public class MemberService {
         member.setMemberEmail(dto.getMemberEmail());
         member.setMemberPassword(passwordEncoder.encode(dto.getMemberPassword()));
         member.setMemberName(dto.getMemberName());
-        member.setMemberGender(dto.getMemberGender());
-        member.setMemberBloodRh(dto.getMemberBloodRh());
-        member.setMemberBloodAbo(dto.getMemberBloodAbo());
+        member.setMemberPhone(dto.getMemberPhone());
 
         memberRepository.save(member);
     }
@@ -70,8 +70,19 @@ public class MemberService {
     }
 
     @Transactional
-    public void logout(Long memberId) {
-        // RT:memberId 키 삭제
+    public void logout(Long memberId, String refreshToken) {
+        if (memberId == null) {
+            log.warn("로그아웃 요청: memberId가 null입니다.");
+            throw new IllegalStateException("로그인 상태가 아닙니다.");
+        }
+
         stringRedisTemplate.delete("RT:" + memberId);
+        log.info("로그아웃: Redis에서 RT:{} 삭제 완료", memberId);
+
+        if (refreshToken != null) {
+            log.info("클라이언트에서 전달된 refreshToken={}", refreshToken);
+        }
     }
+
+
 }

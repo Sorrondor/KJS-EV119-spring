@@ -38,6 +38,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath memberPassword = createString("memberPassword");
 
+    public final StringPath memberPhone = createString("memberPhone");
+
     public final ListPath<MemberSocial, QMemberSocial> memberSocials = this.<MemberSocial, QMemberSocial>createList("memberSocials", MemberSocial.class, QMemberSocial.class, PathInits.DIRECT2);
 
     public final ListPath<MemberStaff, QMemberStaff> memberStaffs = this.<MemberStaff, QMemberStaff>createList("memberStaffs", MemberStaff.class, QMemberStaff.class, PathInits.DIRECT2);

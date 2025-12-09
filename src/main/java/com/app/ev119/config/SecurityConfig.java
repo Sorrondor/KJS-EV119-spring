@@ -1,7 +1,9 @@
 package com.app.ev119.config;
 
 import com.app.ev119.handler.JwtAuthenticationEntryPoint;
+import com.app.ev119.handler.OAuth2LoginSuccessHandler;
 import com.app.ev119.jwt.JwtAuthenticationFilter;
+import com.app.ev119.service.member.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +26,9 @@ public class SecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    private final CustomOAuth2UserService  customOAuth2UserService;
+    private final OAuth2LoginSuccessHandler  oAuth2LoginSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -56,10 +61,24 @@ public class SecurityConfig {
                                 "/api/member/login"
                         ).permitAll()
 
+                        .requestMatchers(
+                                "/oauth2/",
+                                "/login/oauth2/**",
+                                "/oauth2/authorization/**"
+                        ).permitAll()
+
 
                         .anyRequest().authenticated()
                 )
-                
+
+                .oauth2Login(oauth2 -> oauth2
+                .userInfoEndpoint(userInfo -> userInfo
+                        .userService(customOAuth2UserService)
+                )
+                .successHandler(oAuth2LoginSuccessHandler)
+                )
+
+
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

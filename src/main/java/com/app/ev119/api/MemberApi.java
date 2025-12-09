@@ -7,6 +7,8 @@ import com.app.ev119.domain.dto.response.member.LoginResponseDTO;
 import com.app.ev119.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -55,8 +57,35 @@ public class MemberApi {
 
     // 로그아웃
     @DeleteMapping("/logout")
-    public ResponseEntity<ApiResponseDTO> logout(@RequestParam Long memberId) {
-        memberService.logout(memberId);
-        return ResponseEntity.ok(ApiResponseDTO.of("SUCCESS"));
+    public ResponseEntity<ApiResponseDTO> logout(
+            @CookieValue(name = "refreshToken", required = false) String refreshToken
+    ) {
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null ||
+                !authentication.isAuthenticated() ||
+                authentication.getPrincipal().equals("anonymousUser")) {
+
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponseDTO.of("로그인 상태가 아닙니다."));
+        }
+
+        Long memberId = (Long) authentication.getPrincipal();
+        memberService.logout(memberId, refreshToken);
+
+        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
+                .body(ApiResponseDTO.of("로그아웃 되었습니다."));
     }
+
 }
