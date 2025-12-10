@@ -14,6 +14,7 @@ import java.util.List;
         "addresses",
         "memberSocials",
         "memberStaffs",
+        "visited"
 })
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor @AllArgsConstructor
@@ -47,7 +48,8 @@ public class Member {
     private List<MemberSocial> memberSocials;
     @OneToMany(mappedBy = "member")
     private List<MemberStaff> memberStaffs;
-    
+    @OneToMany(mappedBy = "member")
+    private List<Visited> visited;
 
     {
         medications =  new ArrayList<>();
@@ -56,5 +58,6 @@ public class Member {
         addresses = new ArrayList<>();
         memberSocials = new ArrayList<>();
         memberStaffs = new ArrayList<>();
+        visited =  new ArrayList<>();
     }
 }
