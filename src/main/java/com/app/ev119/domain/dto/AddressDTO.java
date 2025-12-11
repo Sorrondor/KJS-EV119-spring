@@ -19,5 +19,5 @@ public class AddressDTO {
     private String addressLongitude;
     private Date addressCreateAt;
     private AddressType addressType;
-    private Member member;
+    private Long memberId;
 }

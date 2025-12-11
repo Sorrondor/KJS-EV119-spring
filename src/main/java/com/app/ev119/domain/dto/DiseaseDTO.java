@@ -10,5 +10,5 @@ public class DiseaseDTO {
     @EqualsAndHashCode.Include
     private Long id;
     private String diseaseName;
-    private Health health;
+    private Long healthId;
 }

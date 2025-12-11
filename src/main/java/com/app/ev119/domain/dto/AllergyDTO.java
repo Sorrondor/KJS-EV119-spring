@@ -12,5 +12,5 @@ public class AllergyDTO {
     private Long id;
     private AllergyType allergyType;
     private String allergyName;
-    private Member member;
+    private Long memberId;
 }

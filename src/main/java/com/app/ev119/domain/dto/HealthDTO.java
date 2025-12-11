@@ -20,6 +20,6 @@ public class HealthDTO {
     private Double healthHeight;
     private Double healthWeight;
     private GenderType healthGender;
-    private Member member;
-    private List<Disease> diseases;
+    private Long memberId;
+    private List<DiseaseDTO> diseases;
 }
