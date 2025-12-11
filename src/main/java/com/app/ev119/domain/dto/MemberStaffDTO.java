@@ -18,6 +18,6 @@ public class MemberStaffDTO {
     @EqualsAndHashCode.Include
     private Long id;
     private String memberStaffIndustry;
-    private Member member;
-    private List<StaffCert> staffCerts;
+    private Long memberId;
+    private List<StaffCertDTO> staffCerts;
 }

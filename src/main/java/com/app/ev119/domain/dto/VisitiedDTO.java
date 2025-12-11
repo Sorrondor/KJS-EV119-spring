@@ -21,5 +21,5 @@ public class VisitiedDTO {
     private String visitedDiagnosis;
     private String visitedTreatmentContent;
     private String visitedDoctor;
-    private Member member;
+    private Long memberId;
 }

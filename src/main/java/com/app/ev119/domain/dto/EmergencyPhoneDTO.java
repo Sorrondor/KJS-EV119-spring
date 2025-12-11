@@ -12,5 +12,5 @@ public class EmergencyPhoneDTO {
     private String emergencyPhoneName;
     private String emergencyPhoneRelationship;
     private String emergencyPhoneNumber;
-    private Member member;
+    private Long memberId;
 }

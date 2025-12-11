@@ -16,5 +16,5 @@ public class StaffCertDTO {
     private String staffCertContent;
     private Date staffCertDate;
     private StaffCertType staffCertType;
-    private MemberStaff memberStaff;
+    private Long memberStaffId;
 }

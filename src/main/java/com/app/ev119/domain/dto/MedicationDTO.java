@@ -12,5 +12,5 @@ public class MedicationDTO {
     private String medicationName;
     private String medicationUsage;
     private String medicationTakingtime;
-    private Member member;
+    private Long memberId;
 }
