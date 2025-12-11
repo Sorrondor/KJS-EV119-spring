@@ -91,4 +91,31 @@ public class MemberApi {
                 .body(ApiResponseDTO.of("로그아웃 되었습니다."));
     }
 
+    // 토큰 재발급
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponseDTO> refreshToken(@CookieValue(name = "refreshToken",  required = false) String refreshToken) {
+
+        if(refreshToken == null || refreshToken.isBlank()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponseDTO.of("refresh token이 존재하지 않습니다."));
+        }
+
+        LoginResponseDTO tokenResponse = memberService.refreshToken(refreshToken);
+
+        ResponseCookie cookie = ResponseCookie.from("refresh token", tokenResponse.getRefreshToken())
+                .httpOnly(true)
+                .path("/")
+                .maxAge(60L * 60 * 24 * 7)
+                .sameSite("Lax")
+                .build();
+
+        Map<String, Object> data = Map.of(
+                "memberId", tokenResponse.getMemberId(),
+                "memberName", tokenResponse.getMemberName(),
+                "memberEmail", tokenResponse.getMemberEmail(),
+                "accessToken", tokenResponse.getAccessToken()
+        );
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(ApiResponseDTO.of("토큰이 재발급 되었습니다"));
+    }
+
 }
