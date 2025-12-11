@@ -93,7 +93,11 @@ public class MemberService {
 
         if (refreshToken != null) {
             log.info("클라이언트에서 전달된 refreshToken={}", refreshToken);
+            long remainingMs = jwtTokenProvider.getRemindValidityInMs(refreshToken);
+            addBlacklist(refreshToken, remainingMs);
         }
+
+
     }
 
     public boolean isBlacklistedRefreshToken(LoginResponseDTO tokenDTO) {
@@ -127,6 +131,54 @@ public class MemberService {
 
         String key = BLACKLIST_TOKEN_PREFIX + refreshToken;
         return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+    }
+
+    public LoginResponseDTO refreshToken(String refreshToken) {
+
+        // 블랙리스트 확인 여부
+        if(isBlacklisted(refreshToken)) {
+            throw new IllegalArgumentException("유효하지 않은 refresh token입니다.");
+        }
+
+        // Jwt 유효성 검증
+        if(!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new IllegalArgumentException("만료되었거나 위조된 refresh token 입니다.");
+        }
+
+        // 토큰에서 memberId 조회
+        Long memberId = jwtTokenProvider.getMemberId(refreshToken);
+
+        //redis에 저장된 refresh token과 일치 불일치 확인
+        String storedRefreshToken = stringRedisTemplate.opsForValue().get("RT:" + memberId);
+
+        if(storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
+            throw new IllegalArgumentException("이미 무효화된 refresh token 입니다.");
+        }
+
+        // 새로운 토큰 발급
+        String newAccessToken =  jwtTokenProvider.createAccessToken(memberId);
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(memberId);
+
+        // 기존 refresh token은 블랙리스트 처리
+        Long remainingMs = jwtTokenProvider.getRemindValidityInMs(refreshToken);
+        addBlacklist(newRefreshToken, remainingMs);
+
+        //redis에 새 refresh token 저장
+        Long newRefreshValidityMs = jwtTokenProvider.getRefreshTokenValidityInMs();
+
+        stringRedisTemplate.opsForValue()
+                .set("RT:" + memberId, newRefreshToken, newRefreshValidityMs, TimeUnit.MILLISECONDS);
+
+        // 회원 정보 조회 후 DTO 리턴
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        return new LoginResponseDTO(
+                member.getId(),
+                member.getMemberEmail(),
+                member.getMemberName(),
+                newAccessToken,
+                newRefreshToken
+        );
     }
 
 }

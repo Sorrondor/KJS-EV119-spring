@@ -89,4 +89,12 @@ public class JwtTokenProvider {
                 .parseSignedClaims(token)
                 .getPayload();
     }
+
+    // 토큰 만료까지 남은 시간
+    public Long getRemindValidityInMs(String token) {
+        Claims claims = parseClaims(token);
+        Date expiration = claims.getExpiration();
+        long now = System.currentTimeMillis();
+        return expiration.getTime() - now;
+    }
 }
