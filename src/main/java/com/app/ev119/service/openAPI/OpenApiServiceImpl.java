@@ -1,35 +1,29 @@
-package com.app.ev119.api.publicApi;
+package com.app.ev119.service.openAPI;
 
+import com.app.ev119.domain.dto.response.firstAid.FirstAidResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
-@RequiredArgsConstructor
-@Slf4j
-@RequestMapping("/bot-api")
-public class OpenAiAPI {
+public class OpenApiServiceImpl implements OpenApiService {
 
     @Value("${openai.api-key}")
     private String openaiApiKey;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @PostMapping("/bot-json")
-    public ResponseEntity<Map<String, Object>> chat(@RequestParam String message) {
-
-        log.info("Loaded openaiApiKey = {}", openaiApiKey);
+    @Override
+    public Map<String, Object> openApi(String message) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -51,9 +45,9 @@ public class OpenAiAPI {
 
         try {
             Map response = restTemplate.postForObject(
-                "https://api.openai.com/v1/chat/completions",
-                entity,
-                Map.class
+                    "https://api.openai.com/v1/chat/completions",
+                    entity,
+                    Map.class
             );
 
             List choices = (List) response.get("choices");
@@ -64,14 +58,16 @@ public class OpenAiAPI {
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> finalJson = mapper.readValue(content, Map.class);
 
-            return ResponseEntity.ok(finalJson);
+            return finalJson;
+
         } catch (Exception e) {
             e.printStackTrace();
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("error", "OpenAI API 요청 실패");
             errorResponse.put("apiKey", openaiApiKey);
             errorResponse.put("details", e.getMessage());
-            return ResponseEntity.status(500).body(errorResponse);
+
+            return errorResponse;
         }
 
     }

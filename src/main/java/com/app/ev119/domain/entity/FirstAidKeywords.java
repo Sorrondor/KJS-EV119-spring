@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter @Setter
 @ToString(exclude = {
-        "firstAidKeywords"
+        "firstAid"
 })
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor @AllArgsConstructor

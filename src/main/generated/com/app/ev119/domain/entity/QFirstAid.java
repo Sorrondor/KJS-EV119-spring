@@ -20,11 +20,11 @@ public class QFirstAid extends EntityPathBase<FirstAid> {
 
     public static final QFirstAid firstAid = new QFirstAid("firstAid");
 
+    public final ListPath<FirstAidKeywords, QFirstAidKeywords> firstAidKeywords = this.<FirstAidKeywords, QFirstAidKeywords>createList("firstAidKeywords", FirstAidKeywords.class, QFirstAidKeywords.class, PathInits.DIRECT2);
+
+    public final ListPath<FirstAidProcedures, QFirstAidProcedures> firstAidProcedures = this.<FirstAidProcedures, QFirstAidProcedures>createList("firstAidProcedures", FirstAidProcedures.class, QFirstAidProcedures.class, PathInits.DIRECT2);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
-
-    public final StringPath keyword = createString("keyword");
-
-    public final ListPath<Procedures, QProcedures> procedures = this.<Procedures, QProcedures>createList("procedures", Procedures.class, QProcedures.class, PathInits.DIRECT2);
 
     public final EnumPath<com.app.ev119.domain.type.UrgencyType> urgency = createEnum("urgency", com.app.ev119.domain.type.UrgencyType.class);
 

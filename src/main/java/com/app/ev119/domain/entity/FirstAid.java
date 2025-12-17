@@ -24,6 +24,7 @@ public class FirstAid {
     private Long id;
     private UrgencyType urgency;
     @OneToMany(mappedBy = "firstAid")
-    private List<Procedures> procedures;
-
+    private List<FirstAidProcedures> firstAidProcedures;
+    @OneToMany(mappedBy = "firstAid")
+    private List<FirstAidKeywords> firstAidKeywords;
 }
