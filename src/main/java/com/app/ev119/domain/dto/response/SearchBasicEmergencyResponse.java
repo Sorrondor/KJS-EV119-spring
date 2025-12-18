@@ -2,6 +2,7 @@ package com.app.ev119.domain.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Data;
 
@@ -29,8 +30,9 @@ public class SearchBasicEmergencyResponse {
     @Data
     public static class Body {
 
-        @JsonProperty("items")
-        private Items items;
+        @JacksonXmlElementWrapper(localName = "items")
+        @JacksonXmlProperty(localName = "item")
+        private List<EmergencyBasicItem> items;
 
         @JsonProperty("numOfRows")
         private int numOfRows;
@@ -42,12 +44,12 @@ public class SearchBasicEmergencyResponse {
         private int totalCount;
     }
 
-    @Data
-    public static class Items {
-
-        // item이 비어 있어도 null/empty로 처리됨
-        @JacksonXmlElementWrapper(useWrapping = false)
-        @JsonProperty("item")
-        private List<Object> itemList;
-    }
+//    @Data
+//    public static class Items {
+//
+//        // item이 비어 있어도 null/empty로 처리됨
+//        @JacksonXmlElementWrapper(useWrapping = false)
+//        @JsonProperty("item")
+//        private List<Object> itemList;
+//    }
 }

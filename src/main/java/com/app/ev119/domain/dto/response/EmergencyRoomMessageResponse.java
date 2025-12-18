@@ -1,8 +1,15 @@
 package com.app.ev119.domain.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @JacksonXmlRootElement(localName = "response")
@@ -27,8 +34,10 @@ public class EmergencyRoomMessageResponse {
     @Data
     public static class Body {
 
-        @JsonProperty("items")
-        private Items items;
+        @JacksonXmlElementWrapper(localName = "items")
+        @JacksonXmlProperty(localName = "item")
+        @JsonSetter(nulls = Nulls.AS_EMPTY)
+        private List<Item> items = new ArrayList<>();
 
         @JsonProperty("numOfRows")
         private int numOfRows;
@@ -41,7 +50,20 @@ public class EmergencyRoomMessageResponse {
     }
 
     @Data
-    public static class Items {
-        // <items/> 형태 → 내부에 item 없음 → null 또는 빈 구조로 들어옴
+    public static class Item {
+        private String dutyAddr;
+        private String dutyName;
+        private String emcOrgCod;
+        private String hpid;
+        private int rnum;
+
+        private String symBlkEndDtm;
+        private String symBlkMsg;
+        private String symBlkMsgTyp;
+        private String symBlkSttDtm;
+        private String symOutDspMth;
+        private String symOutDspYon;
+        private String symTypCod;
+        private String symTypCodMag;
     }
 }
