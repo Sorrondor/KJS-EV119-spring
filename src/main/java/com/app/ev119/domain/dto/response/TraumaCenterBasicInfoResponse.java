@@ -48,6 +48,6 @@ public class TraumaCenterBasicInfoResponse {
 
         @JsonProperty("item")
         @JacksonXmlElementWrapper(useWrapping = false)
-        private List<Object> itemList; // item이 없기 때문에 null 또는 빈 리스트로 들어옴
+        private List<TraumaCenterBasicItem> itemList;
     }
 }

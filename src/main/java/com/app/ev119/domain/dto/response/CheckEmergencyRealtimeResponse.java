@@ -2,6 +2,7 @@ package com.app.ev119.domain.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Data;
 
@@ -29,8 +30,9 @@ public class CheckEmergencyRealtimeResponse {
 
     @Data
     public static class Body {
-        @JsonProperty("items")
-        private Items items;
+        @JacksonXmlElementWrapper(localName = "items")
+        @JacksonXmlProperty(localName = "item")
+        private List<CheckEmergencyRealtimeItem> items;
 
         @JsonProperty("numOfRows")
         private int numOfRows;
@@ -42,10 +44,10 @@ public class CheckEmergencyRealtimeResponse {
         private int totalCount;
     }
 
-    @Data
-    public static class Items {
-        @JacksonXmlElementWrapper(useWrapping = false)
-        @JsonProperty("item")
-        private List<CheckEmergencyRealtimeItem> itemList;
-    }
+//    @Data
+//    public static class Items {
+//        @JacksonXmlElementWrapper(localName = "items")
+//        @JsonProperty("item")
+//        private List<CheckEmergencyRealtimeItem> itemList;
+//    }
 }
