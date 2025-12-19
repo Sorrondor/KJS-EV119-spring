@@ -39,14 +39,14 @@ public class MyPageServiceImpl implements MyPageService {
         memberDTO.setMemberName(foundMember.getMemberName());
         memberDTO.setMemberPhone(foundMember.getMemberPhone());
         memberDTO.setMemberEmail(foundMember.getMemberEmail());
-        memberDTO.setAllergies(foundMember.getAllergies());
-        memberDTO.setHealth(foundMember.getHealth());
-        memberDTO.setMedications(foundMember.getMedications());
-        memberDTO.setVisited(foundMember.getVisited());
-        memberDTO.setEmergencyPhones(foundMember.getEmergencyPhones());
-        memberDTO.setAddresses(foundMember.getAddresses());
-        memberDTO.setMemberSocials(foundMember.getMemberSocials());
-        memberDTO.setMemberStaffs(foundMember.getMemberStaffs());
+//        memberDTO.setAllergies(foundMember.getAllergies());
+//        memberDTO.setHealth(foundMember.getHealth());
+//        memberDTO.setMedications(foundMember.getMedications());
+//        memberDTO.setVisited(foundMember.getVisited());
+//        memberDTO.setEmergencyPhones(foundMember.getEmergencyPhones());
+//        memberDTO.setAddresses(foundMember.getAddresses());
+//        memberDTO.setMemberSocials(foundMember.getMemberSocials());
+//        memberDTO.setMemberStaffs(foundMember.getMemberStaffs());
         return memberDTO;
     }
 
