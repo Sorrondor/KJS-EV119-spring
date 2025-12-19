@@ -8,7 +8,9 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Commit;
 
 import java.util.List;
@@ -18,17 +20,39 @@ import java.util.List;
 class MemberTest {
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Test
     void insertAllMemberData(){
-        Member member1 = new Member();
+//        Member member1 = new Member();
+//
+//        member1.setMemberName("김길동");
+//        member1.setMemberEmail("test1234@gmail.com");
+//        member1.setMemberPassword(passwordEncoder.encode("1234"));
+//        member1.setMemberPhone("01013572468");
+//        entityManager.persist(member1);
 
-        member1.setMemberName("김길동");
-        member1.setMemberEmail("test1234@gmail.com");
-        member1.setMemberPassword("1234");
-        member1.setMemberPhone("01013572468");
-        entityManager.persist(member1);
+//        Member member = entityManager.find(Member.class, member1.getId());
 
-        Member member = entityManager.find(Member.class, member1.getId());
+//        Health health = new Health();
+//        health.setHealthBloodRh(BloodRh.PLUS);
+//        health.setHealthBloodAbo(BloodAbo.B);
+//        health.setHealthHeight(169.5);
+//        health.setHealthWeight(51.5);
+//        health.setHealthGender(GenderType.M);
+//        health.setMember(member);
+//        entityManager.persist(health);
+
+        Member member = entityManager.find(Member.class, 1L);
+        log.info("member={}", member);
+
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
+        QHealth qHealth = QHealth.health;
+        List<Health> healthList = jpaQueryFactory.selectFrom(qHealth).where(qHealth.member.id.eq(member.getId())).fetch();
+        Long healthId = healthList.get(0).getId();
+
+        Health health = entityManager.find(Health.class, healthId);
+        log.info("health={}", health);
 
         Address address = new Address();
         address.setAddressType(AddressType.HOME);
@@ -39,15 +63,6 @@ class MemberTest {
         address.setAddressLongitude("경도");
         address.setMember(member);
         entityManager.persist(address);
-
-        Health health = new Health();
-        health.setHealthBloodRh(BloodRh.PLUS);
-        health.setHealthBloodAbo(BloodAbo.B);
-        health.setHealthHeight(169.5);
-        health.setHealthWeight(51.5);
-        health.setHealthGender(GenderType.M);
-        health.setMember(member);
-        entityManager.persist(health);
 
         Disease disease = new Disease();
         disease.setDiseaseName("질병 이름");
@@ -92,6 +107,19 @@ class MemberTest {
         staffCert.setMemberStaff(memberStaff);
         entityManager.persist(staffCert);
 
+
+        Visited visited = new Visited();
+//        visited.setVisitedDate();
+        visited.setVisitedName("병원명");
+        visited.setVisitedDepartment("진료과");
+        visited.setVisitedType(VisitedType.CLINIC);
+        visited.setVisitedReason("방문 사유");
+        visited.setVisitedDiagnosis("진단명");
+        visited.setVisitedTreatmentContent("치료 내용");
+        visited.setVisitedDoctor("담당 의사");
+        visited.setMember(member);
+        entityManager.persist(visited);
+
         log.info("inserted all member data: {}", member);
     }
 
@@ -109,8 +137,9 @@ class MemberTest {
         QAllergy qAllergy = QAllergy.allergy;
         QEmergencyPhone qEmergencyPhone = QEmergencyPhone.emergencyPhone;
         QAddress qAddress = QAddress.address;
+        QVisited qVisited = QVisited.visited;
 
-        List<Tuple> memberAllDatas = jpaQueryFactory.select(qMember, qMemberSocial, qMemberStaff, qStaffCert, qHealth, qDisease, qMedication, qAllergy, qEmergencyPhone, qAddress)
+        List<Tuple> memberAllDatas = jpaQueryFactory.select(qMember, qMemberSocial, qMemberStaff, qStaffCert, qHealth, qDisease, qMedication, qAllergy, qEmergencyPhone, qAddress, qVisited)
                 .from(qMember)
                 .join(qMemberSocial)
                 .on(qMember.id.eq(qMemberSocial.member.id))
@@ -130,8 +159,12 @@ class MemberTest {
                 .on(qMember.id.eq(qEmergencyPhone.member.id))
                 .join(qAddress)
                 .on(qMember.id.eq(qAddress.member.id))
+                .join(qVisited)
+                .on(qMember.id.eq(qVisited.member.id))
                 .fetch();
 
+        List<Long> list = memberAllDatas.stream().map((data)->data.get(qAddress).getId()).toList();
+        list.forEach((id)->entityManager.remove(entityManager.find(Address.class, id)));
         memberAllDatas.forEach((data)->log.info("{}", data));
     }
 
