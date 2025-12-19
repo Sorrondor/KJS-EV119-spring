@@ -224,6 +224,15 @@ public class MemberService {
         stringRedisTemplate.delete(key);
     }
 
+    @Transactional(readOnly = true)
+    public String findMemberEmailByMemberPhone(String memberPhone) {
+        String normalizedPhone = normalizePhone(memberPhone);
+
+        return memberRepository.findEmailByMemberPhone(normalizedPhone)
+                .orElseThrow(() -> new IllegalArgumentException("해당 번호로 가입된 회원이 없습니다."));
+    }
+
+
 
 
 

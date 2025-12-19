@@ -29,6 +29,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // 전화번호로 아이디 찾기
     Optional<Member> findByMemberPhone(String memberPhone);
 
+    @Query("SELECT m.memberEmail FROM Member m WHERE m.memberPhone = :phone")
+    Optional<String> findEmailByMemberPhone(@Param("phone") String phone);
+
+
     // 이름으로 이메일 목록 찾기
     @Query("SELECT m.memberEmail FROM Member m WHERE m.memberName = :name")
     public List<String> findEmailsByMemberName(@Param("name") String name);

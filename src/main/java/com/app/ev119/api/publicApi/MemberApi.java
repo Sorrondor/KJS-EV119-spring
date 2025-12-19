@@ -133,10 +133,12 @@ public class MemberApi {
                                                  @RequestParam String memberPhone) {
 
         String resetToken = smsService.verifyAndIssueResetToken(authCode, memberPhone);
+        String memberEmail = memberService.findMemberEmailByMemberPhone(memberPhone);
 
         Map<String, Object> data = Map.of(
                 "resetToken", resetToken,
-                "memberPhone", memberPhone
+                "memberPhone", memberPhone,
+                "memberEmail", memberEmail
         );
 
         return ResponseEntity.ok(ApiResponseDTO.of("인증되었습니다.", data));
