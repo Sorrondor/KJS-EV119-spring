@@ -39,6 +39,7 @@ public class Health {
     private GenderType healthGender;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "MEMBER_ID", unique = true)
     private Member member;
 
     @OneToMany(mappedBy = "health")
