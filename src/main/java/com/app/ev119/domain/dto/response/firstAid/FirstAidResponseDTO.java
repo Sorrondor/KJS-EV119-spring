@@ -1,5 +1,7 @@
 package com.app.ev119.domain.dto.response.firstAid;
 
+import com.app.ev119.domain.dto.request.firstAid.FirstAidRequestDTO;
+import com.app.ev119.domain.entity.FirstAid;
 import com.app.ev119.domain.entity.FirstAidKeywords;
 import com.app.ev119.domain.entity.FirstAidProcedures;
 import com.app.ev119.domain.type.UrgencyType;
@@ -13,11 +15,16 @@ import java.util.List;
 public class FirstAidResponseDTO {
     private Long id;
     private UrgencyType urgency;
-    private List<FirstAidProcedures> firstAidProcedures;
-    private List<FirstAidKeywords> firstAidKeywords;
+    private List<String> firstAidProcedures;
+    private List<String> firstAidKeywords;
 
-    public FirstAidResponseDTO(FirstAidProcedures firstAidProcedures) {
-        this.id = firstAidProcedures.getId();
-        this.urgency = firstAidProcedures.getFirstAid().getUrgency();
+    public FirstAidResponseDTO(FirstAid firstAid) {
+        this.id = firstAid.getId();
+        this.urgency = firstAid.getUrgency();
+    }
+    public FirstAidResponseDTO(FirstAidRequestDTO firstAidRequestDTO) {
+        this.urgency = firstAidRequestDTO.getUrgency();
+        this.firstAidProcedures = firstAidRequestDTO.getFirstAidProcedures();
+        this.firstAidKeywords = firstAidRequestDTO.getFirstAidKeywords();
     }
 }

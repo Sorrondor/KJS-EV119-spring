@@ -5,5 +5,5 @@ import com.app.ev119.domain.dto.response.firstAid.FirstAidResponseDTO;
 import java.util.Map;
 
 public interface OpenApiService {
-    public Map<String, Object> openApi(String message);
+    public Map<String, Object> searchFirstAid(String message);
 }

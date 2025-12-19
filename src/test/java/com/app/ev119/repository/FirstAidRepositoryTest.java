@@ -1,15 +1,20 @@
 package com.app.ev119.repository;
 
-import com.app.ev119.domain.entity.FirstAid;
-import com.app.ev119.domain.entity.FirstAidKeywords;
-import com.app.ev119.domain.entity.FirstAidProcedures;
+import com.app.ev119.domain.dto.response.firstAid.FirstAidResponseDTO;
+import com.app.ev119.domain.entity.*;
 import com.app.ev119.domain.type.UrgencyType;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
+
+import java.util.List;
 
 @SpringBootTest
 @Slf4j @Commit
@@ -24,6 +29,9 @@ public class FirstAidRepositoryTest {
 
     @Autowired
     private FirstAidKeywordsRepository firstAidKeywordsRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Test
     public void insertFirstAid(){
@@ -62,6 +70,30 @@ public class FirstAidRepositoryTest {
 
     @Test
     public void findFirstAid(){
-        log.info("있음? 없음?={}", firstAidKeywordsRepository.existsByKeyword("테스트"));
+
+        String message = "테스트";
+        if( firstAidKeywordsRepository.existsByKeyword(message) ) {
+            JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
+            QFirstAidKeywords qFirstAidKeywords = QFirstAidKeywords.firstAidKeywords;
+            JPAQuery<FirstAidKeywords> query = jpaQueryFactory.selectFrom(qFirstAidKeywords).where(qFirstAidKeywords.keyword.like("%" + message + "%"));
+
+            List<FirstAidKeywords> resultList = query.fetch();
+            resultList.stream().map(FirstAidKeywords::toString).forEach(log::info);
+
+            FirstAidKeywords firstAidKeywords = resultList.get(0);
+            log.info("찾은 키워드 객체: {}", firstAidKeywords);
+            FirstAid firstAid = firstAidRepository.findById(firstAidKeywords.getFirstAid().getId()).get();
+            log.info("찾은 응급처치 객체: {}", firstAid);
+            List<FirstAidProcedures> firstAidProceduresList = firstAid.getFirstAidProcedures();
+            log.info("찾은 응급처치 과정");
+            firstAidProceduresList.stream().map(FirstAidProcedures::toString).forEach(log::info);
+
+            FirstAidResponseDTO firstAidResponseDTO = new FirstAidResponseDTO(firstAid);
+            firstAidResponseDTO.setFirstAidProcedures(firstAidProceduresList);
+            firstAidResponseDTO.setFirstAidKeywords(resultList);
+        } else {
+            log.info("{} 이라는 키워드가 없습니다.", message);
+        }
+
     }
 }
