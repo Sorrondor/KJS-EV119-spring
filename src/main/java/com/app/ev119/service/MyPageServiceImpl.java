@@ -2,6 +2,7 @@ package com.app.ev119.service;
 
 import com.app.ev119.domain.dto.*;
 import com.app.ev119.domain.dto.request.MemberDTO;
+import com.app.ev119.domain.dto.response.ChangePasswordDTO;
 import com.app.ev119.domain.entity.*;
 import com.app.ev119.repository.*;
 import jakarta.persistence.EntityManager;
@@ -80,10 +81,19 @@ public class MyPageServiceImpl implements MyPageService {
     }
 
     @Override
-    public void modifyPassword(Long memberId, String password) {
+    public void modifyPassword(Long memberId, ChangePasswordDTO password) {
         Member foundMember = entityManager.find(Member.class, memberId);
-        password = passwordEncoder.encode(password);
-        foundMember.setMemberPassword(password);
+        String newPassword = passwordEncoder.encode(password.getNewPassword());
+        String currentPassword = password.getCurrentPassword();
+        String oldPassword = foundMember.getMemberPassword();
+
+        boolean matches = passwordEncoder.matches(currentPassword, oldPassword);
+
+        if (matches){
+            foundMember.setMemberPassword(newPassword);
+        } else{
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.app.ev119.api.privateApi;
 
 import com.app.ev119.domain.dto.ApiResponseDTO;
 import com.app.ev119.domain.dto.request.MemberDTO;
+import com.app.ev119.domain.dto.response.ChangePasswordDTO;
 import com.app.ev119.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,7 @@ public class MyPageApi {
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<ApiResponseDTO> changePassword(Authentication tokenDTO, @RequestBody String password) {
+    public ResponseEntity<ApiResponseDTO> changePassword(Authentication tokenDTO, @RequestBody ChangePasswordDTO password) {
         Long memberId = myPageService.findIdByToken(tokenDTO);
         myPageService.modifyPassword(memberId, password);
         return ResponseEntity.status(HttpStatus.OK)
