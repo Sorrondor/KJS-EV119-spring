@@ -46,12 +46,17 @@ public class MedicationServiceImpl implements MedicationService {
 
     @Override
     public void modifyMedications(Long memberId, List<MedicationDTO> medicationDTOs) {
-        if (medicationDTOs == null) {
-            throw new MedicationException("복용 약물 정보가 없습니다.");
-        }
         Member member = entityManager.find(Member.class, memberId);
         if (member == null) {
             throw new MyPageException("존재하지 않는 회원입니다. memberId: " + memberId);
+        }
+
+        if (medicationDTOs == null) {
+            Medication medication = new Medication();
+            medication.setMember(member);
+            entityManager.persist(medication);
+            entityManager.flush();
+//            throw new MedicationException("복용 약물 정보가 없습니다.");
         }
 
         List<Medication> existingMedications = medicationRepository.findByMember_Id(memberId);

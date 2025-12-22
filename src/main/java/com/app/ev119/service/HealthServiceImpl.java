@@ -33,7 +33,12 @@ public class HealthServiceImpl implements HealthService {
     public HealthDTO findHealth(Long memberId) {
         Health health = healthRepository.findByMember_Id(memberId);
         if (health == null) {
-            throw new HealthException("건강 정보를 찾을 수 없습니다. memberId: " + memberId);
+            health = new Health();
+            Member member = entityManager.find(Member.class, memberId);
+            health.setMember(member);
+            entityManager.persist(health);
+            entityManager.flush();
+//            throw new HealthException("건강 정보를 찾을 수 없습니다. memberId: " + memberId);
         }
 
         HealthDTO healthDTO = new HealthDTO();

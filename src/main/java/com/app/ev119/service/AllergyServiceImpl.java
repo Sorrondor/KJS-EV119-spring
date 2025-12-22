@@ -3,7 +3,6 @@ package com.app.ev119.service;
 import com.app.ev119.domain.dto.AllergyDTO;
 import com.app.ev119.domain.entity.Allergy;
 import com.app.ev119.domain.entity.Member;
-import com.app.ev119.exception.AllergyException;
 import com.app.ev119.exception.MyPageException;
 import com.app.ev119.repository.AllergyRepository;
 import jakarta.persistence.EntityManager;
@@ -46,12 +45,17 @@ public class AllergyServiceImpl implements AllergyService {
 
     @Override
     public void modifyAllergies(Long memberId, List<AllergyDTO> allergyDTOs) {
-        if (allergyDTOs == null) {
-            throw new AllergyException("알러지 정보가 없습니다.");
-        }
         Member member = entityManager.find(Member.class, memberId);
         if (member == null) {
             throw new MyPageException("존재하지 않는 회원입니다. memberId: " + memberId);
+        }
+
+        if (allergyDTOs == null) {
+            Allergy allergy = new Allergy();
+            allergy.setMember(member);
+            entityManager.persist(allergy);
+            entityManager.flush();
+//            throw new AllergyException("알러지 정보가 없습니다.");
         }
 
         List<Allergy> existingAllergies = allergyRepository.findByMember_Id(memberId);

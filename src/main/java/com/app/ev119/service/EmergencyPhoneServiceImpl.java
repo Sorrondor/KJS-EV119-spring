@@ -46,12 +46,17 @@ public class EmergencyPhoneServiceImpl implements EmergencyPhoneService {
 
     @Override
     public void modifyEmergencyPhones(Long memberId, List<EmergencyPhoneDTO> emergencyPhoneDTOs) {
-        if (emergencyPhoneDTOs == null) {
-            throw new EmergencyPhoneException("응급 전화 정보가 없습니다.");
-        }
         Member member = entityManager.find(Member.class, memberId);
         if (member == null) {
             throw new MyPageException("존재하지 않는 회원입니다. memberId: " + memberId);
+        }
+
+        if (emergencyPhoneDTOs == null) {
+            EmergencyPhone emergencyPhone = new EmergencyPhone();
+            emergencyPhone.setMember(member);
+            entityManager.persist(emergencyPhone);
+            entityManager.flush();
+//            throw new EmergencyPhoneException("응급 전화 정보가 없습니다.");
         }
 
         List<EmergencyPhone> existingPhones = emergencyPhoneRepository.findByMember_Id(memberId);
