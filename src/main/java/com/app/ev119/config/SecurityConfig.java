@@ -35,7 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/member/signup", "/api/member/login", "/api/member/refresh").permitAll()
                         .requestMatchers("/api/member/verify", "/api/member/password/reset").permitAll()
                         .requestMatchers("/api/member/staff/signup").permitAll()
-
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/private/**").authenticated()
 
                         .anyRequest().permitAll()

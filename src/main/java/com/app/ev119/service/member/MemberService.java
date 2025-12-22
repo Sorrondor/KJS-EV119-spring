@@ -109,6 +109,16 @@ public class MemberService {
 
         Long memberId = member.getId();
 
+        if(member.getMemberType() == MemberType.STAFF){
+            MemberStaff memberStaff = memberStaffRepository.findFirstByMember_Id(memberId)
+                    .orElseThrow(() -> new IllegalArgumentException("의료진 신청 정보가 없습니다."));
+
+            if(memberStaff.getStaffStatus() != StaffStatus.APPROVED) {
+                throw new IllegalArgumentException("의료진 승인 대기 중입니다.");
+            }
+
+        }
+
         // AccessToken 발급
         String role = "ROLE_" + member.getMemberType().name();
         String accessToken = jwtTokenProvider.createAccessToken(memberId, role);
@@ -175,6 +185,17 @@ public class MemberService {
         // 회원 조회
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        if (member.getMemberType() == MemberType.STAFF) {
+
+            MemberStaff staff = memberStaffRepository.findFirstByMember_Id(memberId)
+                    .orElseThrow(() -> new IllegalStateException("의료진 신청 정보가 없습니다."));
+
+            if (staff.getStaffStatus() != StaffStatus.APPROVED) {
+                throw new IllegalStateException("의료진 승인 상태가 아닙니다.");
+            }
+        }
+
 
         // 새로운 토큰 발급
         String role = "ROLE_" + member.getMemberType().name();
